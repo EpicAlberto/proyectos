@@ -3,722 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funcionamiento Motor DC & JGB37-520</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <title>Descubre FRC | Más que Robots</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
+        /* --- VARIABLES Y RESET --- */
+        :root {
+            --first-red: #ED1C24;
+            --first-blue: #0066B3;
+            --dark-bg: #1a1a1a;
+            --darker-bg: #121212;
+            --text-color: #f4f4f4;
+            --text-muted: #aaaaaa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #e2e8f0;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        /* Animación para el campo magnético del estator */
-        .magnetic-field {
-            animation: pulse-field 2s infinite;
-        }
-        @keyframes pulse-field {
-            0% { opacity: 0.3; transform: scale(0.95); }
-            50% { opacity: 0.6; transform: scale(1.05); }
-            100% { opacity: 0.3; transform: scale(0.95); }
-        }
-
-        /* Animación del Rotor General */
-        .rotor-spin {
-            animation: spin 2s linear infinite;
-            transform-origin: center;
-        }
-        
-        /* Clases para el simulador de engranajes */
-        .gear-fast {
-            animation: spin 0.5s linear infinite; /* Motor interno muy rápido */
-        }
-        .gear-slow {
-            animation: spin 28.1s linear infinite; /* Salida 56.2 veces más lenta */
+        /* --- NAVEGACIÓN --- */
+        nav {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--first-blue);
         }
 
-        /* Animación para el puente H */
-        .flow-path {
-            stroke-dasharray: 10;
-            animation: dash 1s linear infinite;
-        }
-        @keyframes dash {
-            to { stroke-dashoffset: -20; }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
         }
 
-        .transistor-active {
-            filter: drop-shadow(0 0 5px #4ade80);
-            stroke: #4ade80 !important;
+        .logo span { color: var(--first-red); }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes spin-reverse {
-            from { transform: rotate(360deg); }
-            to { transform: rotate(0deg); }
+        .nav-links a:hover { color: var(--first-blue); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            /* Imagen de fondo genérica de robótica/tech */
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
         }
 
-        .spin-cw { animation: spin 2s linear infinite; }
-        .spin-ccw { animation: spin-reverse 2s linear infinite; }
-
-        .gradient-text {
-            background: linear-gradient(to right, #60a5fa, #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            border-color: #3b82f6;
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+
+        .cta-button {
+            background-color: var(--first-red);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .cta-button:hover {
+            background-color: #c41219;
+            transform: scale(1.05);
+        }
+
+        /* --- SECCIONES GENERALES --- */
+        .section {
+            padding: 80px 10%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--first-blue);
+            margin: 10px auto;
+        }
+
+        /* --- FIRST --- */
+        .about-first {
+            background-color: var(--darker-bg);
+            text-align: center;
+        }
+
+        .highlight-box {
+            border-left: 5px solid var(--first-red);
+            padding-left: 20px;
+            text-align: left;
+            margin: 20px auto;
+            max-width: 800px;
+            font-style: italic;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+        }
+
+        /* --- FRC CARDS --- */
+        .frc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--darker-bg);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            border-top: 4px solid var(--first-blue);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .card h3 { margin-bottom: 15px; color: var(--first-blue); }
+
+        /* --- VALORES --- */
+        .values-section {
+            background-color: var(--darker-bg);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .value-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border: 1px solid #333;
+        }
+
+        .value-box h3 { color: var(--first-red); margin-bottom: 10px; }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: black;
+            padding: 40px 10%;
+            text-align: center;
+            border-top: 3px solid var(--first-red);
+        }
+
+        footer p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; } /* En una versión completa aquí iría un menú hamburguesa */
+            .section { padding: 60px 5%; }
         }
     </style>
 </head>
-<body class="antialiased selection:bg-blue-500 selection:text-white">
+<body>
 
-    <!-- Navegación -->
-    <nav class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-blue-400 text-2xl"></i>
-                    <span class="font-bold text-xl tracking-tight">Motores<span class="text-blue-400">Lab</span></span>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#teoria" class="hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">Teoría</a>
-                        <a href="#especifico" class="hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">Modelo JGB37</a>
-                        <a href="#puente-h" class="hover:text-yellow-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">Puente H</a>
-                        <a href="#proyecto" class="hover:text-purple-400 px-3 py-2 rounded-md text-sm font-medium transition-colors border border-purple-500/30 bg-purple-500/10">Proyecto Banda</a>
-                    </div>
-                </div>
-            </div>
+    <nav>
+        <div class="logo">TU <span>EQUIPO</span></div>
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#first">¿Qué es FIRST?</a>
+            <a href="#frc">FRC</a>
+            <a href="#valores">Valores</a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="relative overflow-hidden bg-slate-900 py-16 sm:py-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
-                Entendiendo el <span class="gradient-text">Movimiento</span>
-            </h1>
-            <p class="mt-4 text-xl text-slate-400 max-w-2xl mx-auto">
-                Desde la física básica de Lorentz hasta el control preciso con Puente H.
-            </p>
-            <div class="mt-8 flex justify-center gap-4">
-                <a href="#teoria" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                    Cómo funciona
-                </a>
-                <a href="#proyecto" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg shadow-purple-500/30">
-                    Ver Proyecto Real
-                </a>
-            </div>
+    <header id="inicio" class="hero">
+        <h1>Más que Robots</h1>
+        <p>Construyendo el futuro de la ingeniería, un estudiante a la vez.</p>
+        <a href="#frc" class="cta-button">Conoce FRC</a>
+    </header>
+
+    <section id="first" class="section about-first">
+        <h2 class="section-title">¿Qué es FIRST?</h2>
+        <p>FIRST (For Inspiration and Recognition of Science and Technology) es la organización sin fines de lucro líder en el mundo para el fomento de STEM en jóvenes. Fundada por Dean Kamen.</p>
+        
+        <div class="highlight-box">
+            "No usamos a los jóvenes para construir robots; usamos a los robots para construir jóvenes."
         </div>
-        <!-- Background decorative blur -->
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl -z-0 pointer-events-none"></div>
-    </div>
+    </section>
 
-    <!-- SECCIÓN 1: TEORÍA GENERAL -->
-    <section id="teoria" class="py-16 bg-slate-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-white mb-4">1. El Motor DC General</h2>
-                <p class="text-slate-400 max-w-2xl mx-auto">La magia ocurre gracias a la <span class="text-yellow-400 font-bold">Fuerza de Lorentz</span>: Electricidad + Magnetismo = Movimiento.</p>
+    <section id="frc" class="section">
+        <h2 class="section-title">FRC: El Deporte de la Mente</h2>
+        <p style="text-align: center; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            FIRST Robotics Competition combina la emoción del deporte con el rigor de la ciencia. Equipos de preparatoria diseñan, construyen y programan robots industriales bajo reglas estrictas.
+        </p>
+
+        <div class="frc-grid">
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>El Robot</h3>
+                <p>Robots de hasta <strong>56 kg (125 lbs)</strong> que compiten en alianzas de 3 contra 3 a alta velocidad.</p>
             </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <!-- Visualización Interactiva -->
-                <div class="relative bg-slate-900 rounded-2xl p-8 border border-slate-700 shadow-2xl flex flex-col items-center justify-center h-80">
-                    <div class="absolute inset-0 flex items-center justify-between px-12 pointer-events-none">
-                        <div class="w-16 h-48 bg-red-500/20 border-2 border-red-500 rounded-l-xl flex items-center justify-center text-red-500 font-bold text-2xl magnetic-field">N</div>
-                        <div class="w-16 h-48 bg-blue-500/20 border-2 border-blue-500 rounded-r-xl flex items-center justify-center text-blue-500 font-bold text-2xl magnetic-field">S</div>
-                    </div>
-                    
-                    <!-- SVG Rotor -->
-                    <svg viewBox="0 0 100 100" class="w-48 h-48 rotor-spin z-10">
-                        <!-- Bobina del rotor -->
-                        <rect x="35" y="10" width="30" height="80" rx="5" fill="#d97706" stroke="#fcd34d" stroke-width="2" />
-                        <line x1="50" y1="10" x2="50" y2="90" stroke="#fcd34d" stroke-width="1" />
-                        <!-- Eje Central -->
-                        <circle cx="50" cy="50" r="8" fill="#94a3b8" />
-                        <!-- Conmutador -->
-                        <circle cx="50" cy="50" r="5" fill="#f59e0b" stroke="#000" stroke-width="1" stroke-dasharray="15 2" />
-                    </svg>
-                    
-                    <div class="absolute bottom-4 text-xs text-slate-500">Representación simplificada</div>
-                </div>
-
-                <!-- Explicación de Componentes -->
-                <div class="space-y-6">
-                    <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-red-500 transition-all hover:bg-slate-700 cursor-default">
-                        <h3 class="font-bold text-lg text-white mb-1"><i class="fa-solid fa-magnet mr-2"></i> Estator (Imán Fijo)</h3>
-                        <p class="text-slate-400 text-sm">Crea un campo magnético constante. Es la "carretera" magnética por la que el motor quiere viajar.</p>
-                    </div>
-
-                    <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-yellow-500 transition-all hover:bg-slate-700 cursor-default">
-                        <h3 class="font-bold text-lg text-white mb-1"><i class="fa-solid fa-bolt mr-2"></i> Rotor (Bobina)</h3>
-                        <p class="text-slate-400 text-sm">Al recibir electricidad, se convierte en un electroimán. Intenta alinearse con el estator, generando el giro.</p>
-                    </div>
-
-                    <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-blue-500 transition-all hover:bg-slate-700 cursor-default">
-                        <h3 class="font-bold text-lg text-white mb-1"><i class="fa-solid fa-arrows-rotate mr-2"></i> Conmutador y Escobillas</h3>
-                        <p class="text-slate-400 text-sm">¡El secreto! Invierten la electricidad cada media vuelta. Esto cambia los polos del rotor justo a tiempo para que siga siendo repelido y nunca se detenga.</p>
-                    </div>
-                </div>
+            <div class="card">
+                <div class="card-icon">🎓</div>
+                <h3>Estudiantes</h3>
+                <p>Jóvenes de preparatoria (14-18 años) aprendiendo mecánica, programación, Java, C++, LabVIEW y CAD.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📅</div>
+                <h3>La Temporada</h3>
+                <p>Enero a Abril. Comienza con el "Kickoff" mundial y termina en el Campeonato Mundial en Houston.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🚀</div>
+                <h3>Impacto</h3>
+                <p>Acceso a más de $80 millones USD en becas y desarrollo de habilidades de liderazgo.</p>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN 2: EL MOTOR ESPECÍFICO -->
-    <section id="especifico" class="py-16 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <span class="text-blue-500 font-semibold tracking-wider uppercase text-sm">Análisis de Hardware</span>
-                <h2 class="text-3xl font-bold text-white mt-2">Modelo JGB37-520</h2>
-                <p class="text-slate-400 mt-2">¿Por qué es especial este motor? La clave está en la reducción.</p>
-            </div>
-
-            <!-- Ficha Técnica Visual -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                <!-- Motor Interno -->
-                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover transition-all duration-300">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400 mb-4">
-                        <i class="fa-solid fa-bolt text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Motor Base</h3>
-                    <ul class="space-y-2 text-slate-400 text-sm">
-                        <li class="flex justify-between border-b border-slate-700 pb-1"><span>Voltaje:</span> <span class="text-white">6V DC</span></li>
-                        <li class="flex justify-between border-b border-slate-700 pb-1"><span>Consumo (vacío):</span> <span class="text-white">< 0.2A</span></li>
-                        <li class="flex justify-between border-b border-slate-700 pb-1"><span>Consumo (carga):</span> <span class="text-white">< 0.5A</span></li>
-                    </ul>
-                    <p class="mt-4 text-xs text-slate-500 italic">El motor interno gira muy rápido pero con poca fuerza.</p>
-                </div>
-
-                <!-- Caja Reductora (Highlight) -->
-                <div class="bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl p-6 border-2 border-blue-500/50 shadow-blue-500/10 shadow-lg transform scale-105 z-10">
-                    <div class="absolute top-0 right-0 bg-blue-600 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">CLAVE</div>
-                    <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white mb-4">
-                        <i class="fa-solid fa-cogs text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Caja Reductora</h3>
-                    <div class="text-center py-4">
-                        <span class="text-4xl font-black text-white">1 : 56.2</span>
-                        <p class="text-sm text-blue-300 mt-1">Relación de Reducción</p>
-                    </div>
-                    <p class="text-slate-300 text-sm text-center">
-                        Por cada <strong>56.2 vueltas</strong> del motor interno, la llanta da <strong>1 vuelta</strong>.
-                        <br><br>
-                        <span class="text-green-400"><i class="fa-solid fa-arrow-up"></i> Gana Torque</span>
-                        <span class="text-red-400 ml-2"><i class="fa-solid fa-arrow-down"></i> Pierde Velocidad</span>
-                    </p>
-                </div>
-
-                <!-- Salida Final -->
-                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover transition-all duration-300">
-                    <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 mb-4">
-                        <i class="fa-solid fa-gauge-high text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Eje de Salida</h3>
-                    <ul class="space-y-2 text-slate-400 text-sm">
-                        <li class="flex justify-between border-b border-slate-700 pb-1"><span>Velocidad:</span> <span class="text-white">90 RPM</span></li>
-                        <li class="flex justify-between border-b border-slate-700 pb-1"><span>Torque:</span> <span class="text-white">3.2 Kg.cm</span></li>
-                        <li class="flex justify-between border-b border-slate-700 pb-1"><span>Eje:</span> <span class="text-white">Tipo D, 6mm</span></li>
-                    </ul>
-                    <p class="mt-4 text-xs text-slate-500 italic">Esta es la potencia real disponible para mover tu robot.</p>
-                </div>
-            </div>
-
-            <!-- Visualizador de Engranajes -->
-            <div class="bg-slate-800 rounded-2xl p-8 border border-slate-700">
-                <h3 class="text-xl font-bold text-white mb-6 text-center">Visualizando la Reducción (1:56)</h3>
-                <div class="flex flex-col md:flex-row justify-around items-center gap-8">
-                    <div class="text-center">
-                        <div class="relative w-24 h-24 mx-auto mb-2">
-                            <i class="fa-solid fa-gear text-6xl text-slate-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gear-fast"></i>
-                        </div>
-                        <p class="text-sm font-semibold text-slate-300">Motor Interno</p>
-                        <p class="text-xs text-slate-500">~5000 RPM (Estimado)</p>
-                    </div>
-                    
-                    <div class="text-3xl text-slate-600"><i class="fa-solid fa-arrow-right"></i></div>
-                    
-                    <div class="text-center">
-                        <div class="relative w-32 h-32 mx-auto mb-2 bg-slate-700/50 rounded-full border-4 border-dashed border-slate-600 flex items-center justify-center">
-                            <div class="w-2 h-16 bg-blue-500 gear-slow origin-bottom absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="top: 15px; height: 50px; transform-origin: bottom center;"></div>
-                            <div class="w-4 h-4 bg-white rounded-full z-10"></div>
-                        </div>
-                        <p class="text-sm font-semibold text-blue-400">Tu Llanta (Salida)</p>
-                        <p class="text-xs text-slate-500">90 RPM</p>
-                    </div>
-                </div>
-                <p class="text-center text-xs text-slate-500 mt-6">* Animación a escala real de tiempo. Observa lo lento que gira la salida comparado con la entrada.</p>
-            </div>
+    <section id="valores" class="section values-section">
+        <div class="value-box">
+            <h3>Gracious Professionalism®</h3>
+            <p>Es competir como locos, pero tratarnos con respeto y amabilidad en el proceso. Aprendemos y ganamos juntos.</p>
+        </div>
+        <div class="value-box">
+            <h3>Coopertition®</h3>
+            <p>Cooperación + Competición. Ayudamos a nuestros rivales en los pits incluso si tenemos que competir contra ellos en el siguiente partido.</p>
         </div>
     </section>
 
-    <!-- SECCIÓN NUEVA: PUENTE H -->
-    <section id="puente-h" class="py-16 bg-slate-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <span class="text-yellow-500 font-semibold tracking-wider uppercase text-sm">Electrónica de Potencia</span>
-                <h2 class="text-3xl font-bold text-white mt-2">Control de Giro: El Puente H</h2>
-                <p class="text-slate-400 mt-2 max-w-3xl mx-auto">
-                    Para controlar tu motor necesitas invertir la polaridad. Esto se logra con un circuito en forma de "H" compuesto por 4 transistores que actúan como interruptores.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- Explicación del Diagrama y LISTA -->
-                <div class="space-y-6">
-                    
-                    <!-- IMAGEN DIAGRAMA -->
-                    <div class="bg-white/5 p-4 rounded-xl border border-slate-700">
-                        <h4 class="text-white font-bold mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-image text-blue-400"></i> Diagrama Esquemático
-                        </h4>
-                        <div class="bg-white rounded-lg p-2 overflow-hidden">
-                             <img src="https://i0.wp.com/www.ingmecafenix.com/wp-content/uploads/2017/05/puente-h-circuito.webp?resize=683%2C384&ssl=1" 
-                                  alt="Diagrama del Puente H" 
-                                  class="w-full h-auto object-contain hover:scale-105 transition-transform duration-300">
-                        </div>
-                        <p class="text-xs text-slate-400 mt-2 text-center">Fuente: IngMecaFenix</p>
-                    </div>
-                    <!-- FIN IMAGEN -->
-
-                    <div class="bg-slate-900 p-6 rounded-xl border border-slate-700">
-                        <h3 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-microchip text-yellow-500 mr-2"></i>Componentes Clave</h3>
-                        <ul class="space-y-4 text-slate-300 text-sm">
-                            <li class="flex items-start gap-3">
-                                <span class="bg-slate-800 p-2 rounded text-blue-400 font-mono font-bold">Q2, Q4</span>
-                                <div>
-                                    <strong class="text-white">TIP32 (PNP):</strong> Transistores de potencia de "lado alto". Dejan pasar corriente positiva cuando su base recibe una señal negativa (GND).
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="bg-slate-800 p-2 rounded text-green-400 font-mono font-bold">Q3, Q5</span>
-                                <div>
-                                    <strong class="text-white">TIP31 (NPN):</strong> Transistores de potencia de "lado bajo". Conectan el motor a tierra cuando su base recibe señal positiva.
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="bg-slate-800 p-2 rounded text-yellow-400 font-mono font-bold">Q1, Q6</span>
-                                <div>
-                                    <strong class="text-white">2N2222:</strong> Transistores pequeños que actúan como "drivers". Amplifican la señal de tu Arduino para activar los transistores grandes.
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="bg-slate-800 p-2 rounded text-red-400 font-mono font-bold">Diodos</span>
-                                <div>
-                                    <strong class="text-white">1N4004:</strong> Protección vital. Absorben los picos de voltaje que genera el motor al frenar para no quemar los transistores.
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="bg-yellow-900/20 p-6 rounded-xl border border-yellow-700/50">
-                        <h4 class="font-bold text-yellow-500 mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Regla de Oro</h4>
-                        <p class="text-slate-300 text-sm">
-                            Nunca actives "Avance" y "Retroceso" al mismo tiempo. Esto crea un cortocircuito directo (Shoot-through) que quemará tus transistores instantáneamente.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Simulador Visual Puente H -->
-                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-700 shadow-2xl relative">
-                    <h3 class="text-lg font-bold text-white mb-4 text-center">Simulador Interactivo</h3>
-                    
-                    <!-- SVG Diagrama Simplificado -->
-                    <div class="relative w-full aspect-square max-w-md mx-auto">
-                        <svg viewBox="0 0 400 350" class="w-full h-full">
-                            <!-- Cables Base -->
-                            <line x1="50" y1="50" x2="350" y2="50" stroke="#475569" stroke-width="4" /> <!-- VCC Rail -->
-                            <line x1="50" y1="300" x2="350" y2="300" stroke="#475569" stroke-width="4" /> <!-- GND Rail -->
-                            
-                            <!-- Rama Izquierda -->
-                            <line x1="100" y1="50" x2="100" y2="100" stroke="#475569" stroke-width="4" />
-                            <line x1="100" y1="250" x2="100" y2="300" stroke="#475569" stroke-width="4" />
-                            
-                            <!-- Rama Derecha -->
-                            <line x1="300" y1="50" x2="300" y2="100" stroke="#475569" stroke-width="4" />
-                            <line x1="300" y1="250" x2="300" y2="300" stroke="#475569" stroke-width="4" />
-
-                            <!-- Conexiones Motor -->
-                            <line x1="100" y1="150" x2="150" y2="175" stroke="#475569" stroke-width="4" id="wire-left"/>
-                            <line x1="300" y1="150" x2="250" y2="175" stroke="#475569" stroke-width="4" id="wire-right"/>
-
-                            <!-- Transistores (Representados como Círculos/Switches) -->
-                            <!-- Q2 (Top Left) -->
-                            <circle cx="100" cy="125" r="20" fill="#1e293b" stroke="#94a3b8" stroke-width="3" id="q2" />
-                            <text x="70" y="125" fill="white" font-size="12">Q2 (PNP)</text>
-                            
-                            <!-- Q4 (Top Right) -->
-                            <circle cx="300" cy="125" r="20" fill="#1e293b" stroke="#94a3b8" stroke-width="3" id="q4" />
-                            <text x="330" y="125" fill="white" font-size="12">Q4 (PNP)</text>
-
-                            <!-- Q3 (Bottom Left) -->
-                            <circle cx="100" cy="225" r="20" fill="#1e293b" stroke="#94a3b8" stroke-width="3" id="q3" />
-                            <text x="65" y="230" fill="white" font-size="12">Q3 (NPN)</text>
-                            
-                            <!-- Q5 (Bottom Right) -->
-                            <circle cx="300" cy="225" r="20" fill="#1e293b" stroke="#94a3b8" stroke-width="3" id="q5" />
-                            <text x="330" y="230" fill="white" font-size="12">Q5 (NPN)</text>
-
-                            <!-- Motor Centro -->
-                            <g transform="translate(200, 175)">
-                                <circle cx="0" cy="0" r="35" fill="#334155" stroke="#cbd5e1" stroke-width="3" />
-                                <text x="0" y="5" text-anchor="middle" fill="white" font-weight="bold" font-size="20">M</text>
-                                <!-- Icono de giro -->
-                                <path id="motor-arrow" d="M -25 -25 L 25 -25 L 0 -40 Z" fill="transparent" /> 
-                            </g>
-
-                            <!-- Rutas de Flujo (Animaciones SVG) -->
-                            <!-- Camino Avance: Q2 -> Motor -> Q5 -->
-                            <path id="path-fwd" d="M 100 50 L 100 125 L 100 175 L 200 175 L 300 175 L 300 225 L 300 300" 
-                                  fill="none" stroke="#4ade80" stroke-width="6" opacity="0" />
-                            
-                            <!-- Camino Retroceso: Q4 -> Motor -> Q3 -->
-                            <path id="path-rev" d="M 300 50 L 300 125 L 300 175 L 200 175 L 100 175 L 100 225 L 100 300" 
-                                  fill="none" stroke="#ef4444" stroke-width="6" opacity="0" />
-
-                        </svg>
-                    </div>
-
-                    <!-- Controles Simulador -->
-                    <div class="flex justify-center gap-4 mt-6">
-                        <button onclick="controlPuente('retroceso')" id="btn-retro" class="bg-slate-700 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold transition-all border border-slate-600">
-                            <i class="fa-solid fa-backward mr-2"></i>Retroceso
-                        </button>
-                        <button onclick="controlPuente('stop')" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg font-bold transition-all border border-slate-500">
-                            Stop
-                        </button>
-                        <button onclick="controlPuente('avance')" id="btn-avance" class="bg-slate-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold transition-all border border-slate-600">
-                            Avance<i class="fa-solid fa-forward ml-2"></i>
-                        </button>
-                    </div>
-                    <p id="h-status" class="text-center text-slate-400 mt-4 text-sm h-6">Motor detenido</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- SECCIÓN 3: CALCULADORA -->
-    <section id="calculadora" class="py-16 bg-slate-800/50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div class="bg-blue-600 px-6 py-4">
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-weight-hanging"></i> Laboratorio de Torque
-                    </h2>
-                </div>
-                <div class="p-6 md:p-8">
-                    <p class="text-slate-600 mb-6">
-                        El torque de tu motor es <strong>3.2 Kg.cm</strong>. Esto significa que puede levantar 3.2 Kg si la carga está a 1 cm del eje.
-                        ¿Podrá levantar tu carga?
-                    </p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Inputs -->
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Distancia del eje (Radio de la rueda/brazo)</label>
-                                <div class="flex items-center">
-                                    <input type="number" id="distancia" value="3" class="w-full border border-slate-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900" placeholder="Ej: 3">
-                                    <span class="bg-slate-100 border border-l-0 border-slate-300 rounded-r-lg px-3 py-2 text-slate-600">cm</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Peso de la carga</label>
-                                <div class="flex items-center">
-                                    <input type="number" id="peso" value="0.5" class="w-full border border-slate-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900" placeholder="Ej: 0.5">
-                                    <span class="bg-slate-100 border border-l-0 border-slate-300 rounded-r-lg px-3 py-2 text-slate-600">Kg</span>
-                                </div>
-                            </div>
-                            <button onclick="calcularTorque()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors">
-                                Calcular
-                            </button>
-                        </div>
-
-                        <!-- Resultado -->
-                        <div class="flex flex-col justify-center items-center bg-slate-50 rounded-xl p-4 border border-slate-200">
-                            <div id="resultado-icono" class="text-6xl mb-4 text-slate-300">
-                                <i class="fa-solid fa-question"></i>
-                            </div>
-                            <h3 id="resultado-titulo" class="text-xl font-bold text-slate-800 mb-1">Esperando datos...</h3>
-                            <p id="resultado-desc" class="text-center text-sm text-slate-500">Introduce valores para ver si el motor puede moverlo.</p>
-                            
-                            <!-- Barra de esfuerzo -->
-                            <div class="w-full bg-slate-200 rounded-full h-4 mt-6 overflow-hidden relative">
-                                <div id="barra-esfuerzo" class="bg-green-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between w-full text-xs text-slate-400 mt-1">
-                                <span>0%</span>
-                                <span>100% (Límite 3.2 Kg.cm)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN NUEVA: PROYECTO BANDA -->
-    <section id="proyecto" class="py-20 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-purple-500 font-semibold tracking-wider uppercase text-sm">Aplicación Real</span>
-                <h2 class="text-4xl font-extrabold text-white mt-2">Proyecto: Banda Transportadora</h2>
-                <p class="text-slate-400 mt-4 max-w-2xl mx-auto">
-                    Una implementación industrial a escala que integra control lógico (Arduino), electrónica de potencia (Puente H) y mecánica de precisión para simular un proceso de automatización.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- Columna Izquierda: Lógica y Control -->
-                <div class="space-y-8">
-                    <div class="bg-slate-800 rounded-2xl p-8 border border-slate-700 shadow-xl">
-                        <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                            <i class="fa-solid fa-microchip text-purple-500 mr-3"></i> Cerebro y Potencia
-                        </h3>
-                        
-                        <div class="space-y-6">
-                            <!-- Unidad de Procesamiento -->
-                            <div class="flex gap-4">
-                                <div class="mt-1 bg-blue-500/20 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-blue-400">
-                                    <i class="fa-solid fa-code"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-bold">Unidad de Procesamiento (Arduino UNO)</h4>
-                                    <p class="text-slate-400 text-sm mt-1">
-                                        El "jefe" de la operación. Lee los botones físicos y decide qué señales enviar. Gestiona la lógica de seguridad y las luces indicadoras.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Puente H -->
-                            <div class="flex gap-4">
-                                <div class="mt-1 bg-yellow-500/20 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-yellow-400">
-                                    <i class="fa-solid fa-bolt"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-bold">Etapa de Potencia (Puente H)</h4>
-                                    <p class="text-slate-400 text-sm mt-1">
-                                        Implementado en protoboard. Es el músculo que permite invertir el voltaje hacia el motor JGB37-520, logrando el movimiento bidireccional.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Regulación -->
-                            <div class="flex gap-4">
-                                <div class="mt-1 bg-green-500/20 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-green-400">
-                                    <i class="fa-solid fa-battery-full"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-white font-bold">Regulación de Energía</h4>
-                                    <p class="text-slate-400 text-sm mt-1">
-                                        Separa la alimentación lógica de la del motor para evitar "ruido" eléctrico que podría reiniciar el Arduino.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Caja de Estados -->
-                    <div class="bg-slate-800 rounded-2xl p-8 border border-slate-700 shadow-xl">
-                        <h3 class="text-xl font-bold text-white mb-4">Lógica de Estados</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                            <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
-                                <div class="text-red-500 mb-2"><i class="fa-solid fa-stop-circle text-2xl"></i></div>
-                                <div class="font-bold text-white text-sm">REPOSO</div>
-                                <div class="text-xs text-slate-400 mt-1">Motor apagado.<br>LED indicador de paro.</div>
-                            </div>
-                            <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
-                                <div class="text-green-500 mb-2"><i class="fa-solid fa-circle-arrow-right text-2xl"></i></div>
-                                <div class="font-bold text-white text-sm">ADELANTE</div>
-                                <div class="text-xs text-slate-400 mt-1">Polaridad (+).<br>Banda avanza.</div>
-                            </div>
-                            <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
-                                <div class="text-blue-500 mb-2"><i class="fa-solid fa-circle-arrow-left text-2xl"></i></div>
-                                <div class="font-bold text-white text-sm">ATRÁS</div>
-                                <div class="text-xs text-slate-400 mt-1">Polaridad invertida.<br>Banda retrocede.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Columna Derecha: Mecánica y Galería -->
-                <div class="space-y-8">
-                    <!-- Ficha Mecánica -->
-                    <div class="bg-slate-800 rounded-2xl p-8 border border-slate-700 shadow-xl">
-                        <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                            <i class="fa-solid fa-cogs text-gray-400 mr-3"></i> Estructura Mecánica
-                        </h3>
-                        <ul class="space-y-3 text-slate-300">
-                            <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> <span><strong>Chasis:</strong> Perfilería de aluminio para máxima rigidez.</span></li>
-                            <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> <span><strong>Tracción:</strong> Motor DC con caja reductora (aumenta torque).</span></li>
-                            <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> <span><strong>Rodamientos:</strong> Chumaceras para giro suave de rodillos.</span></li>
-                        </ul>
-                    </div>
-
-                    <!-- Galería de Imágenes -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Imagen Circuito -->
-                        <div class="group relative aspect-square bg-white rounded-xl overflow-hidden border-2 border-slate-700 hover:border-purple-500 transition-all cursor-pointer">
-                            <img src="circuito.jpg" 
-                                 alt="Circuito en Protoboard" 
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
-                                <span class="text-white font-bold text-sm">Circuito de Control</span>
-                                <span class="text-slate-300 text-xs">Puente H en Protoboard</span>
-                            </div>
-                        </div>
-
-                        <!-- Imagen Banda -->
-                        <div class="group relative aspect-square bg-white rounded-xl overflow-hidden border-2 border-slate-700 hover:border-purple-500 transition-all cursor-pointer">
-                            <img src="banda.jpg" 
-                                 alt="Banda Transportadora Terminada" 
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
-                                <span class="text-white font-bold text-sm">Banda Terminada</span>
-                                <span class="text-slate-300 text-xs">Vista Superior del Prototipo</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-slate-900 py-8 border-t border-slate-800 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
-            <p>&copy; 2025 Ronroneo Robótico. Todos los derechos reservados.</p>
-            <p class="mt-2">Advertencia: No conectar el motor directamente a los pines de un Arduino. Usar el circuito de Puente H mostrado.</p>
-        </div>
+    <footer>
+        <p>© 2024 Tu Equipo de Robótica.</p>
+        <p>FIRST® is a registered trademark of United States Foundation for Inspiration and Recognition of Science and Technology (FIRST).</p>
     </footer>
 
-    <script>
-        function calcularTorque() {
-            // Datos del motor
-            const maxTorque = 3.2; // Kg.cm
-
-            // Datos usuario
-            const distancia = parseFloat(document.getElementById('distancia').value);
-            const peso = parseFloat(document.getElementById('peso').value);
-
-            if (!distancia || !peso || distancia <= 0 || peso <= 0) {
-                alert("Por favor introduce valores válidos mayores a 0");
-                return;
-            }
-
-            // Cálculo: Torque Requerido = Fuerza (Peso) * Distancia
-            const torqueRequerido = peso * distancia;
-            
-            // Porcentaje de uso del motor
-            let porcentajeUso = (torqueRequerido / maxTorque) * 100;
-            
-            // Elementos UI
-            const icono = document.getElementById('resultado-icono');
-            const titulo = document.getElementById('resultado-titulo');
-            const desc = document.getElementById('resultado-desc');
-            const barra = document.getElementById('barra-esfuerzo');
-
-            // Actualizar barra
-            let barraWidth = porcentajeUso > 100 ? 100 : porcentajeUso;
-            barra.style.width = `${barraWidth}%`;
-
-            // Lógica de resultado
-            if (torqueRequerido <= maxTorque) {
-                // Éxito
-                icono.innerHTML = '<i class="fa-solid fa-check-circle text-green-500"></i>';
-                titulo.textContent = "¡Puede moverlo!";
-                titulo.className = "text-xl font-bold text-green-600 mb-1";
-                desc.textContent = `Torque necesario: ${torqueRequerido.toFixed(2)} Kg.cm. El motor trabaja al ${porcentajeUso.toFixed(0)}% de su capacidad.`;
-                barra.className = "bg-green-500 h-4 rounded-full transition-all duration-500";
-            } else {
-                // Fallo
-                icono.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-500"></i>';
-                titulo.textContent = "Demasiado peso";
-                titulo.className = "text-xl font-bold text-red-600 mb-1";
-                desc.textContent = `Necesitas ${torqueRequerido.toFixed(2)} Kg.cm, pero el motor solo da ${maxTorque} Kg.cm. Reduce el peso o acorta la distancia.`;
-                barra.className = "bg-red-500 h-4 rounded-full transition-all duration-500";
-            }
-        }
-
-        // Lógica del Puente H
-        function controlPuente(accion) {
-            // Elementos SVG
-            const q2 = document.getElementById('q2');
-            const q4 = document.getElementById('q4');
-            const q3 = document.getElementById('q3');
-            const q5 = document.getElementById('q5');
-            const pathFwd = document.getElementById('path-fwd');
-            const pathRev = document.getElementById('path-rev');
-            const arrow = document.getElementById('motor-arrow');
-            const status = document.getElementById('h-status');
-
-            // Botones
-            const btnAvance = document.getElementById('btn-avance');
-            const btnRetro = document.getElementById('btn-retro');
-
-            // Resetear todo
-            [q2, q4, q3, q5].forEach(el => el.classList.remove('transistor-active'));
-            pathFwd.style.opacity = '0';
-            pathFwd.classList.remove('flow-path');
-            pathRev.style.opacity = '0';
-            pathRev.classList.remove('flow-path');
-            arrow.setAttribute('fill', 'transparent');
-            arrow.classList.remove('spin-cw', 'spin-ccw');
-            
-            // Reset botones
-            btnAvance.classList.remove('bg-green-600', 'ring', 'ring-green-400');
-            btnAvance.classList.add('bg-slate-700');
-            btnRetro.classList.remove('bg-red-600', 'ring', 'ring-red-400');
-            btnRetro.classList.add('bg-slate-700');
-
-            if (accion === 'avance') {
-                // Activar Diagonal Q2 + Q5
-                q2.classList.add('transistor-active');
-                q5.classList.add('transistor-active');
-                pathFwd.style.opacity = '1';
-                pathFwd.classList.add('flow-path');
-                
-                // Animar motor
-                arrow.setAttribute('fill', '#4ade80');
-                arrow.classList.add('spin-cw');
-                
-                // Texto
-                status.innerHTML = "<span class='text-green-400 font-bold'>Giro Horario (CW)</span>: Q2 y Q5 conduciendo.";
-                
-                // Botón activo
-                btnAvance.classList.remove('bg-slate-700');
-                btnAvance.classList.add('bg-green-600', 'ring', 'ring-green-400');
-            } 
-            else if (accion === 'retroceso') {
-                // Activar Diagonal Q4 + Q3
-                q4.classList.add('transistor-active');
-                q3.classList.add('transistor-active');
-                pathRev.style.opacity = '1';
-                pathRev.classList.add('flow-path');
-
-                // Animar motor
-                arrow.setAttribute('fill', '#ef4444');
-                arrow.classList.add('spin-ccw');
-
-                // Texto
-                status.innerHTML = "<span class='text-red-400 font-bold'>Giro Anti-Horario (CCW)</span>: Q4 y Q3 conduciendo.";
-
-                // Botón activo
-                btnRetro.classList.remove('bg-slate-700');
-                btnRetro.classList.add('bg-red-600', 'ring', 'ring-red-400');
-            }
-            else {
-                status.textContent = "Motor detenido (Freno o inercia). Todos los transistores abiertos.";
-            }
-        }
-    </script>
 </body>
 </html>
